@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+  <title>Suiter Demo</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <h2>Default Approach with Auto-generated Classes</h2>
+
+  <div class="e1" data-suiter-queries="
+    w < 480 || sw <= 640,
+    sw > 640 && sw <= 1024,
+    sw > 1024
+    ">
+  </div>
+
+  <h2>Custom Class Approach</h2>
+
+  <div class="e3"
+    data-suiter-queries="
+      w <= 640,
+      w > 640 && w <= 1024,
+      w > 1024
+    "
+    data-suiter-classes="
+      Card--condensed,
+      Card,
+      Card--simple
+    "
+    >
+  </div>
+
+  <script type="text/javascript" charset="utf-8" src="suiter.js"></script>
+  <script>
+    suiter();
+  </script>
+
+</body>
+</html>

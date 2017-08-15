@@ -1,0 +1,89 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-size: 16px;
+  font-family: -apple-system, 'Helvetica Neue', 'Lucida Grande';
+  padding: 3rem;
+}
+
+.e1,
+.e2,
+.e3 {
+  padding: 3rem;
+  border: 1px solid #aaa;
+  margin-bottom: 3rem;
+}
+
+
+
+
+/* Example 1 */
+
+.w-lt-480-or-sw-lte-640 {
+  background-color: #e4e;
+}
+
+.w-lt-480-or-sw-lte-640::after {
+  content: "I wear the '.w-lt-480-or-sw-lte-640' suit when my width is < 480px or the screen width is <= 640px"
+}
+
+.sw-gt-640-and-sw-lte-1024 {
+  background-color: #aee;
+  height: 300px;
+}
+
+.sw-gt-640-and-sw-lte-1024::after {
+  content: "I wear the '.sw-gt-640-and-sw-lte-1024' suit when the screen width is > 640px and <= 1024px"
+}
+
+.sw-gt-1024 {
+  background-color: teal;
+  color: #ffffff;
+}
+
+.sw-gt-1024::after {
+  content: "I wear the '.sw-gt-1024' suit when the screen width is > 1024px"
+}
+
+
+
+
+/* Card */
+
+.Card {
+  background-color: #eae;
+  height: 450px;
+}
+
+.Card::after {
+  content: "I'm wearing the 'Card' suit"
+}
+
+
+
+/* Card--condensed */
+
+.Card--condensed {
+  background-color: #aae;
+  padding: 1rem;
+  height: auto;
+}
+
+.Card--condensed::after {
+  content: "I'm wearing the 'Card--condensed' suit"
+}
+
+
+
+/* Card--simple */
+
+.Card--simple {
+  font-size: 3rem;
+  height: 450px;
+}
+
+.Card--simple::after {
+  content: "I'm wearing the 'Card--simple' suit"
+}
