@@ -8,10 +8,14 @@ requires:
   - Nothing
 */
 
-function suiter() {
+
+function suiter(elementSelector) {
+
+  let resizing = false;
+  const rules = getRules(elementSelector);
 
   function getRules(selector) {
-    var els = Array.prototype.slice.call(document.querySelectorAll(selector));
+    const els = Array.prototype.slice.call(document.querySelectorAll(selector));
     return els.map(function(el){
       return {
         el: el,
@@ -21,12 +25,13 @@ function suiter() {
   }
 
   function getQueries(el) {
-    var responsiveQuery = el.dataset.suiterQueries;
-    var queries = responsiveQuery.split(',');
+    const responsiveQuery = el.getAttribute('data-suiter-queries');
+    const queries = responsiveQuery.split(',');
+    const suiterClasses = el.getAttribute('data-suiter-classes');
+    let classes;
 
-    if (el.dataset.suiterClasses) {
-      var suiterClasses = el.dataset.suiterClasses;
-      var classes = suiterClasses.split(',')
+    if (suiterClasses) {
+      classes = suiterClasses.split(',')
         .map(function(style){
           return cleanString(style).split(' ');
         });
@@ -97,13 +102,13 @@ function suiter() {
 
   function resize() {
     rules.forEach(function(rule){
-      var w = rule.el.offsetWidth;
-      var h = rule.el.offsetHeight;
-      var sw = window.innerWidth;
-      var sh = window.innerHeight;
+      const w = rule.el.offsetWidth;
+      const h = rule.el.offsetHeight;
+      const sw = window.innerWidth;
+      const sh = window.innerHeight;
 
       rule.queries.forEach(function(query, c){
-        var style = query.customClass || query.class;
+        const style = query.customClass || query.class;
         eval(query.statement)
           ? addClasses(rule.el, style)
           : removeClasses(rule.el, style);
@@ -113,8 +118,13 @@ function suiter() {
     resizing = false;
   }
 
-  var rules = getRules('[data-suiter-queries]');
-  var resizing = false;
   window.addEventListener('resize', throttle);
   resize();
+
+  // Tear down function
+  return function () {
+    window.removeEventListener('resize', throttle);
+  }
 }
+
+module.exports = suiter;
