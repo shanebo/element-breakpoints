@@ -122,7 +122,7 @@ function suiter(elementSelector) {
   resize();
 
   // Tear down function
-  return function () {
+  return function() {
     window.removeEventListener('resize', throttle);
   }
 }

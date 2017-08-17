@@ -12,6 +12,11 @@ const html = `
   sw > 640 && sw <= 1024,
   sw > 1024
 "/>
+<div class="screen-width" data-suiter-queries="
+sw < 480 || sw <= 640,
+sw > 640 && sw <= 1024,
+sw > 1024
+"/>
 `
 
 describe('suiter', () => {
@@ -21,7 +26,13 @@ describe('suiter', () => {
     document.body.innerHTML = html;
     removeListener = suiter('[data-suiter-queries]');
   });
-  afterEach(() => removeListener());
+  afterEach((done) => {
+    removeListener();
+
+    // Reset to default;
+    setWindowWidth("1024px");
+    requestAnimationFrame(done);
+  });
 
   describe('comparison signs', () => {
     it('sets less than', () => {
@@ -51,19 +62,38 @@ describe('suiter', () => {
   });
 
   describe('screen', () => {
-    it('sets screen width classes', () => {
-      expect(false).to.equal(true);
+    it('sets smaller screen width classes', (done) => {
+      const el = document.querySelector('.screen-width');
+
+      setWindowWidth('500px');
+
+      requestAnimationFrame(() => {
+        expect(el.classList.toString()).to.equal('screen-width sw-lt-480-or-sw-lte-640')
+        done();
+      });
     });
-  });
 
-  it('sets the class for a simple query', () => {
-    const el = document.querySelector('.simple');
-    expect(el.classList.toString()).to.equal('simple w-lt-480');
-  });
+    it('sets medium screen width classes', (done) => {
+      const el = document.querySelector('.screen-width');
 
-  it('sets the class for a complex query', () => {
-    const el = document.querySelector('.complex');
-    expect(el.classList.toString()).to.equal('complex w-lt-480-or-sw-lte-640 sw-gt-640-and-sw-lte-1024');
+      setWindowWidth('1000px');
+
+      requestAnimationFrame(() => {
+        expect(el.classList.toString()).to.equal('screen-width sw-gt-640-and-sw-lte-1024')
+        done();
+      });
+    });
+
+    it('sets larger screen width classes', (done) => {
+      const el = document.querySelector('.screen-width');
+
+      setWindowWidth('1500px');
+
+      requestAnimationFrame(() => {
+        expect(el.classList.toString()).to.equal('screen-width sw-gt-1024')
+        done();
+      });
+    });
   });
 
   it('resets the classes when an element resizes', (done) => {

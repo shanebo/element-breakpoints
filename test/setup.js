@@ -27,6 +27,14 @@ global.setElementWidth = (el, width) => {
   el.style.width = width;
   triggerEvent(window, 'resize');
 }
+global.setWindowWidth = (width) => {
+  Object.defineProperty(window, 'innerWidth', {
+    configurable: true,
+    writable: true,
+    value: parseInt(width, 10)
+  });
+  triggerEvent(window, 'resize');
+};
 
 window.requestAnimationFrame = fn => setTimeout(fn, 0);
 global.requestAnimationFrame = window.requestAnimationFrame
