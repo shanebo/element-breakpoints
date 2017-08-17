@@ -12,10 +12,10 @@
     "mocha": "^3.5.0"
   },
   "scripts": {
-    "test": "mocha test/index.js --reporter spec --require test/setup.js"
+    "test": "mocha test/index.js --reporter spec --require test/setup.js",
+    "start": "budo example/index.js --port 8080"
   },
   "dependencies": {
-    "electron": "^1.7.5",
-    "electron-mocha": "^4.0.0"
+    "budo": "^10.0.4"
   }
 }
