@@ -9,89 +9,88 @@ requires:
 */
 
 
-function suiter(elementSelector) {
+function cleanString(str) {
+  return str.replace(/\s+/g, ' ').trim();
+}
 
-  let resizing = false;
-  const rules = getRules(elementSelector);
+function isValidQuery(query) {
+  return /[swh]\s[><=](?:=)?\s\d+(?:(?:\s?\&\&\s[swh]\s[><=](?:=)?\s\d+)?)+/gi.test(query);
+}
 
-  function getRules(selector) {
-    const els = Array.prototype.slice.call(document.querySelectorAll(selector));
-    return els.map(function(el){
-      return {
-        el: el,
-        queries: getQueries(el)
-      };
-    });
+function queryToClass(query) {
+  return query
+    .replace(/</g, 'lt')
+    .replace(/>/g, 'gt')
+    .replace(/=/g, 'e')
+    .replace(/\|\|/g, 'or')
+    .replace(/\&\&/g, 'and')
+    .replace(/\s/g, '-');
+}
+
+function addClass(el, style) {
+  if (!el.classList.contains(style)) {
+    el.classList.add(style);
   }
+}
 
-  function getQueries(el) {
-    const responsiveQuery = el.getAttribute('data-suiter-queries');
-    const queries = responsiveQuery.split(',');
-    const suiterClasses = el.getAttribute('data-suiter-classes');
-    let classes;
+function addClasses(el, style) {
+  Array.isArray(style)
+    ? style.forEach(addClass.bind(null, el))
+    : addClass(el, style);
+}
 
-    if (suiterClasses) {
-      classes = suiterClasses.split(',')
-        .map(function(style){
-          return cleanString(style).split(' ');
-        });
-    }
+function removeClass(el, style) {
+  if (el.classList.contains(style)) {
+    el.classList.remove(style);
+  }
+}
 
-    return queries
-      .map(function(query){
-        return cleanString(query);
-      }).filter(function(query){
-        return isValidQuery(query);
-      }).map(function(query, q){
-        return {
-          statement: query,
-          class: queryToClass(query),
-          customClass: classes ? classes[q] : null
-        };
+function removeClasses(el, style) {
+  Array.isArray(style)
+    ? style.forEach(removeClass.bind(null, el))
+    : removeClass(el, style);
+}
+
+function getQueries(el) {
+  const responsiveQuery = el.getAttribute('data-suiter-queries');
+  const queries = responsiveQuery.split(',');
+  const suiterClasses = el.getAttribute('data-suiter-classes');
+  let classes;
+
+  if (suiterClasses) {
+    classes = suiterClasses.split(',')
+      .map(function(style){
+        return cleanString(style).split(' ');
       });
   }
 
-  function cleanString(str) {
-    return str.replace(/\s+/g, ' ').trim();
-  }
+  return queries
+    .map(cleanString)
+    .filter(isValidQuery)
+    .map(function(query, q){
+      return {
+        statement: query,
+        class: queryToClass(query),
+        customClass: classes ? classes[q] : null
+      };
+    });
+}
 
-  function isValidQuery(query) {
-    return /[swh]\s[><=](?:=)?\s\d+(?:(?:\s?\&\&\s[swh]\s[><=](?:=)?\s\d+)?)+/gi.test(query);
-  }
+function getRules(selector) {
+  const els = Array.prototype.slice.call(document.querySelectorAll(selector));
 
-  function queryToClass(query) {
-    return query
-      .replace(/</g, 'lt')
-      .replace(/>/g, 'gt')
-      .replace(/=/g, 'e')
-      .replace(/\|\|/g, 'or')
-      .replace(/\&\&/g, 'and')
-      .replace(/\s/g, '-');
-  }
+  return els.map(function(el){
+    return {
+      el: el,
+      queries: getQueries(el)
+    };
+  });
+}
 
-  function addClass(el, style) {
-    if (!el.classList.contains(style)) {
-      el.classList.add(style);
-    }
-  }
+module.exports = function suiter(elementSelector) {
 
-  function addClasses(el, style) {
-    Array.isArray(style)
-      ? style.forEach(addClass.bind(null, el))
-      : addClass(el, style);
-  }
-
-  function removeClass(el, style) {
-    if (el.classList.contains(style)) {
-      el.classList.remove(style);
-    }
-  }
-
-  function removeClasses(el, style) {
-    Array.isArray(style)
-      ? style.forEach(removeClass.bind(null, el))
-      : removeClass(el, style);
-  }
+  let resizing = false;
+  const rules = getRules(elementSelector);
 
   function throttle() {
     if (!resizing) {
@@ -101,14 +100,18 @@ function suiter(elementSelector) {
   }
 
   function resize() {
+    // eval(query.statment) uses these values for comparisons
+    const sw = window.innerWidth;
+    const sh = window.innerHeight;
+
     rules.forEach(function(rule){
+      // eval(query.statment) uses these values for comparisons
       const w = rule.el.offsetWidth;
       const h = rule.el.offsetHeight;
-      const sw = window.innerWidth;
-      const sh = window.innerHeight;
 
       rule.queries.forEach(function(query, c){
         const style = query.customClass || query.class;
+
         eval(query.statement)
           ? addClasses(rule.el, style)
           : removeClasses(rule.el, style);
@@ -125,6 +128,4 @@ function suiter(elementSelector) {
   return function() {
     window.removeEventListener('resize', throttle);
   }
-}
-
-module.exports = suiter;
+};
