@@ -1,14 +1,3 @@
-/*
-name: Suiter
-description: Simple powerful responsive queries
-license: MIT-style
-authors:
-  - Shane Thacker (steadymade.com)
-requires:
-  - Nothing
-*/
-
-
 function cleanString(str) {
   return str.replace(/\s+/g, ' ').trim();
 }
@@ -51,46 +40,39 @@ function removeClasses(el, style) {
     : removeClass(el, style);
 }
 
-function getQueries(el) {
-  const responsiveQuery = el.getAttribute('data-suiter-queries');
-  const queries = responsiveQuery.split(',');
-  const suiterClasses = el.getAttribute('data-suiter-classes');
-  let classes;
+function getBreakpoints(el) {
+  const breakpoints = el.getAttribute('data-breakpoints');
+  const classes = el.getAttribute('data-breakpoints-classes');
+  const classesArray = classes
+    ? classes.split(',').map(style => cleanString(style).split(' '))
+    : null;
 
-  if (suiterClasses) {
-    classes = suiterClasses.split(',')
-      .map(function(style){
-        return cleanString(style).split(' ');
-      });
-  }
-
-  return queries
+  return breakpoints.split(',')
     .map(cleanString)
     .filter(isValidQuery)
-    .map(function(query, q){
+    .map((query, q) => {
       return {
-        statement: query,
-        class: queryToClass(query),
-        customClass: classes ? classes[q] : null
+        query,
+        class: classesArray
+          ? classesArray[q]
+          : queryToClass(query)
       };
     });
 }
 
-function getRules(selector) {
-  const els = Array.prototype.slice.call(document.querySelectorAll(selector));
-
-  return els.map(function(el){
+function getRules() {
+  const els = Array.prototype.slice.call(document.querySelectorAll('[data-breakpoints]'));
+  return els.map(el => {
     return {
-      el: el,
-      queries: getQueries(el)
+      el,
+      breakpoints: getBreakpoints(el)
     };
   });
 }
 
-module.exports = function suiter(elementSelector) {
-
-  let resizing = false;
-  const rules = getRules(elementSelector);
+function elementBreakpoints() {
+  let resizing;
+  let rules;
 
   function throttle() {
     if (!resizing) {
@@ -100,32 +82,36 @@ module.exports = function suiter(elementSelector) {
   }
 
   function resize() {
-    // eval(query.statment) uses these values for comparisons
     const sw = window.innerWidth;
     const sh = window.innerHeight;
 
-    rules.forEach(function(rule){
-      // eval(query.statment) uses these values for comparisons
+    rules.forEach(rule => {
       const w = rule.el.offsetWidth;
       const h = rule.el.offsetHeight;
 
-      rule.queries.forEach(function(query, c){
-        const style = query.customClass || query.class;
-
-        eval(query.statement)
-          ? addClasses(rule.el, style)
-          : removeClasses(rule.el, style);
+      rule.breakpoints.forEach(breakpoint => {
+        // eval(breakpoint.query) uses sw, sh, w, and h for comparisons
+        eval(breakpoint.query)
+          ? addClasses(rule.el, breakpoint.class)
+          : removeClasses(rule.el, breakpoint.class);
       });
     });
 
     resizing = false;
   }
 
-  window.addEventListener('resize', throttle);
-  resize();
+  return {
+    listen: function() {
+      resizing = false;
+      rules = getRules();
+      window.addEventListener('resize', throttle);
+      resize();
+    },
 
-  // Tear down function
-  return function() {
-    window.removeEventListener('resize', throttle);
-  }
-};
+    unlisten: function() {
+      window.removeEventListener('resize', throttle);
+    }
+  };
+}
+
+module.exports = elementBreakpoints;

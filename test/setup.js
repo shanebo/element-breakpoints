@@ -19,14 +19,15 @@ Object.defineProperties(window.HTMLElement.prototype, {
 
 global.triggerEvent = (el, eventName) => {
   const event = document.createEvent('HTMLEvents');
-
   event.initEvent(eventName, true, false);
   el.dispatchEvent(event);
 }
+
 global.setElementWidth = (el, width) => {
   el.style.width = width;
   triggerEvent(window, 'resize');
 }
+
 global.setWindowWidth = (width) => {
   Object.defineProperty(window, 'innerWidth', {
     configurable: true,

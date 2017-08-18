@@ -26,7 +26,7 @@ body {
 }
 
 .w-lt-480-or-sw-lte-640::after {
-  content: "I wear the '.w-lt-480-or-sw-lte-640' suit when my width is < 480px or the screen width is <= 640px"
+  content: "I wear the '.w-lt-480-or-sw-lte-640' class when my width is < 480px or the screen width is <= 640px"
 }
 
 .sw-gt-640-and-sw-lte-1024 {
@@ -35,7 +35,7 @@ body {
 }
 
 .sw-gt-640-and-sw-lte-1024::after {
-  content: "I wear the '.sw-gt-640-and-sw-lte-1024' suit when the screen width is > 640px and <= 1024px"
+  content: "I wear the '.sw-gt-640-and-sw-lte-1024' class when the screen width is > 640px and <= 1024px"
 }
 
 .sw-gt-1024 {
@@ -44,7 +44,7 @@ body {
 }
 
 .sw-gt-1024::after {
-  content: "I wear the '.sw-gt-1024' suit when the screen width is > 1024px"
+  content: "I wear the '.sw-gt-1024' class when the screen width is > 1024px"
 }
 
 
@@ -58,9 +58,8 @@ body {
 }
 
 .Card::after {
-  content: "I'm wearing the 'Card' suit"
+  content: "I'm wearing the 'Card' class"
 }
-
 
 
 /* Card--condensed */
@@ -72,9 +71,8 @@ body {
 }
 
 .Card--condensed::after {
-  content: "I'm wearing the 'Card--condensed' suit"
+  content: "I'm wearing the 'Card--condensed' class"
 }
-
 
 
 /* Card--simple */
@@ -85,5 +83,5 @@ body {
 }
 
 .Card--simple::after {
-  content: "I'm wearing the 'Card--simple' suit"
+  content: "I'm wearing the 'Card--simple' class"
 }

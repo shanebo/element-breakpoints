@@ -1,2 +1,2 @@
-const suiter = require('../index.js');
-suiter('[data-suiter-queries]');
+const elementBreakpoints = require('../index.js');
+elementBreakpoints().listen();
