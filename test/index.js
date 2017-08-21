@@ -1,33 +1,33 @@
 const { expect } = require('chai');
-const suiter = require('../index.js');
+const elementBreakpoints = require('../index.js')();
 
 const html = `
-<div class="less-than" data-suiter-queries="w < 100" />
-<div class="less-than-equal" data-suiter-queries="w <= 100" />
-<div class="greater-than" data-suiter-queries="w > 0" />
-<div class="greater-than-equal" data-suiter-queries="w >= 0" />
-<div class="simple" data-suiter-queries="w < 480" />
-<div class="complex" data-suiter-queries="
+<div class="less-than" data-breakpoints="w < 100" />
+<div class="less-than-equal" data-breakpoints="w <= 100" />
+<div class="greater-than" data-breakpoints="w > 0" />
+<div class="greater-than-equal" data-breakpoints="w >= 0" />
+<div class="simple" data-breakpoints="w < 480" />
+<div class="complex" data-breakpoints="
   w < 480 || sw <= 640,
   sw > 640 && sw <= 1024,
   sw > 1024
 "/>
-<div class="screen-width" data-suiter-queries="
+<div class="screen-width" data-breakpoints="
 sw < 480 || sw <= 640,
 sw > 640 && sw <= 1024,
 sw > 1024
 "/>
-`
+`;
 
-describe('suiter', () => {
-  let removeListener;
+describe('elementBreakpoints', () => {
 
   beforeEach(() => {
     document.body.innerHTML = html;
-    removeListener = suiter('[data-suiter-queries]');
+    elementBreakpoints.listen();
   });
+
   afterEach((done) => {
-    removeListener();
+    elementBreakpoints.unlisten();
 
     // Reset to default;
     setWindowWidth("1024px");
