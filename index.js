@@ -48,8 +48,15 @@ function getBreakpoints(el) {
     : null;
 
   return breakpoints.split(',')
-    .map(cleanString)
-    .filter(isValidQuery)
+    .map(query => {
+      const cleanedQuery = cleanString(query);
+
+      if (!isValidQuery(cleanedQuery)) {
+        throw new Error('Invalid breakpoint breakpoint defined for breakpoint "' + query + '" on element:\n\n' + el.outerHTML + '\n');
+      }
+
+      return cleanedQuery;
+    })
     .map((query, q) => {
       return {
         query,

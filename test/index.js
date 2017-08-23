@@ -40,6 +40,18 @@ describe('elementBreakpoints', () => {
       expect(el.classList.toString()).to.equal('less-than w-lt-100');
     });
 
+    it('throws an error for an invalid query', () => {
+      elementBreakpoints.unlisten();
+      document.body.innerHTML =`
+        <div class="invalid"
+          data-breakpoints="w = 20"
+        />
+      `;
+
+      expect(elementBreakpoints.listen).to.throw()
+      elementBreakpoints.unlisten();
+    });
+
     it('sets less than or equal', () => {
       const el = document.querySelector('.less-than-equal');
       expect(el.classList.toString()).to.equal('less-than-equal w-lte-100');
